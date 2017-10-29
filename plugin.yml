@@ -1,0 +1,10 @@
+name: PVPToggle
+main: uk.co.ElmHoe.Main
+version: 0.1
+author: ElmHoe
+load: POSTWORLD
+commands:
+   pvptoggle:
+      description: The ability to be able to disable / enable PvP.
+      aliases: [pvp]
+      usage: /<command> [args]
