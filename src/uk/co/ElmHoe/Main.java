@@ -538,7 +538,7 @@ public Map<UUID, Boolean> playersInPvP = new HashMap<UUID, Boolean>();
 			@Override
 			public void run()
 			{
-				removePlayersFromPvPTimer(playerToAdd);
+				removePlayersFromPvPTimer(playerToAdd, playerToAlsoAdd);
 			}
 		}.runTaskLater(this, 100);
 	}
