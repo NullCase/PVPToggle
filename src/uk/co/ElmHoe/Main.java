@@ -289,17 +289,14 @@ public class Main extends JavaPlugin implements Listener {
 						e.setCancelled(false);
 						break;
 					case 1:
-						arrow.remove();
 						playerGettingHurtp.setFireTicks(0);
 						e.setCancelled(true);
 						break;
 					case 2:
-						arrow.remove();
 						playerGettingHurtp.setFireTicks(0);
 						e.setCancelled(true);
 						break;
 					case 3:
-						arrow.remove();
 						playerGettingHurtp.setFireTicks(0);
 						e.setCancelled(true);
 						break;
