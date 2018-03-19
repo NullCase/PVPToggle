@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="PVPToggle" default="makejar" basedir=".">
-    <target name="makejar" description="Create a jar for the project">
+	
+    <target name="build-deps">
+        <ant antfile="../EHUtilities/build.xml" target="makeCommonJar"/>
+    </target>
+
+    <target name="makejar" description="Create a jar for the project" depends="build-deps">
         <mkdir dir="target"></mkdir>
-        <jar destfile="target/${ant.project.name}.jar">
+        <jar destfile="E:\My Plugins\Auto Builds\${ant.project.name}.jar">
+			<zipgroupfileset dir="lib" includes="*.jar" />
+        	<manifest>
+        	    <attribute name="Main-Class" value="Main.MainClass" />
+			</manifest>
             <fileset dir="bin"></fileset>
             <fileset file="plugin.yml"></fileset>
         </jar>
