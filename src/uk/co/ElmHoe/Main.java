@@ -252,7 +252,7 @@ public class Main extends JavaPlugin implements Listener {
 			UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 			UUID playerCausingHarm = Bukkit.getPlayer(e.getDamager().getName()).getUniqueId();
 			
-			if (e.getDamager().getName() == e.getEntity().getName()) {
+			if (playerGettingHurt == playerCausingHarm) {
 				//Do nothing, don't even check if the player is attacking themselves.
 			}else {
 				int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt),Bukkit.getPlayer(playerCausingHarm));
@@ -280,7 +280,7 @@ public class Main extends JavaPlugin implements Listener {
 				Player playerCausingHarmp = (Player) arrow.getShooter();
 				UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 				Player playerGettingHurtp = (Player) e.getEntity();
-				if (e.getDamager().getName() == e.getEntity().getName()) {
+				if (playerCausingHarmp == playerGettingHurtp) {
 					//Do nothing, don't even check if the player is attacking themselves.
 				}else {
 					int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt), playerCausingHarmp);
@@ -309,34 +309,6 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
-/*	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerProjectileEvent(ProjectileHitEvent e) {
-		if ((e.getEntity() instanceof Arrow) && (e.getHitEntity() instanceof Player)) {
-			final Arrow arrow = (Arrow) e.getHitEntity();
-			if (arrow.getShooter() instanceof Player) {
-				Player playerCausingHarmp = (Player) arrow.getShooter();
-				UUID playerCausingHarm = playerCausingHarmp.getUniqueId();
-				UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
-
-				int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt), Bukkit.getPlayer(playerCausingHarm));
-				switch (pvpCheck) {
-				case 4:
-					break;
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
-				default:
-					break;
-				}
-
-			}
-		}
-	}
-*/
-	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerFishEvent(PlayerFishEvent e) {
 		Player playerFishing = e.getPlayer();
