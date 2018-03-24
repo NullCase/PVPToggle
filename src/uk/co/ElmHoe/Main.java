@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -274,7 +273,8 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 
-		} else if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Projectile)) {
+		} else if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Arrow)) {
+
 			final Arrow arrow = (Arrow) e.getDamager();
 			if (arrow.getShooter() instanceof Player) {
 				Player playerCausingHarmp = (Player) arrow.getShooter();
