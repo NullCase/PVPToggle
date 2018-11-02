@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="PVPToggle/PVPToggle.jar"/>
+    <jar path="E:/Test Servers/1.13.2/plugins/PVPToggle.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/PVPToggle/pvptoggle.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -11,11 +11,15 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <file path="/PVPToggle/pvptoggle.jardesc"/>
         <file path="/PVPToggle/.gitignore"/>
         <file path="/PVPToggle/.project"/>
         <file path="/PVPToggle/plugin.yml"/>
+        <file path="/PVPToggle/pom.xml"/>
+        <file path="/PVPToggle/build.xml"/>
         <file path="/PVPToggle/config.yml"/>
         <javaElement handleIdentifier="=PVPToggle/src"/>
+        <file path="/PVPToggle/PVPToggle.jar"/>
         <file path="/PVPToggle/.classpath"/>
         <javaElement handleIdentifier="=EHUtilities/src"/>
     </selectedElements>
