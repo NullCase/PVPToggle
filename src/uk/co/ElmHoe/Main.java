@@ -54,6 +54,7 @@ public class Main extends JavaPlugin implements Listener {
 	private String noPermission;
 	private String wrongUsage;
 	private Boolean OPsToBypass;
+	private Boolean AllowSelfHarming;
 	private String bothDisabled;
 	private String playerCausingHarmDisabled;
 	private String playerGettingHurtDisabled;
@@ -142,10 +143,6 @@ public class Main extends JavaPlugin implements Listener {
 						{
 							yn = true;
 						}
-							else if (args[1].equalsIgnoreCase("off")||args[1].equalsIgnoreCase("disable")) 
-						{
-							
-						}
 						else 
 						{
 							break;
@@ -163,7 +160,7 @@ public class Main extends JavaPlugin implements Listener {
 						pvpDisabledPlayers.put(puuid, yn);
 						String en = "";
 
-						if (yn == true) 
+						if (yn) 
 						{
 							en = "enabled";
 							if (pvpDisabledPlayers.containsKey(playerUUID)) 
@@ -172,7 +169,7 @@ public class Main extends JavaPlugin implements Listener {
 							}
 							pvpDisabledPlayers.put(playerUUID, false);
 						}
-						if (yn == false) 
+						else
 						{
 							en = "disabled";
 							if (pvpDisabledPlayers.containsKey(playerUUID)) 
@@ -235,7 +232,7 @@ public class Main extends JavaPlugin implements Listener {
 	 * @return 	1 - Cancelled 	- 	Both players have PvP Disabled.<br>
 	 * 2 - Cancelled 	- 	The player that is getting hurt has PvP Disabled.<br>
 	 * 3 - Cancelled 	- 	The player that is causing harm has it disabled.<br>
-	 * 4 - Allowed 	-	The player causing harm is OP and can bypass.<br>
+	 * 4 - Allowed 		-	The player causing harm is OP and can bypass.<br>
 	 * 0 - Allowed		- 	Allows the PvP to go on as normal.
 	 */
 	public int isPvPDisabledForPlayers(Player playerGettingHurt, Player playerCausingHarm) 
@@ -248,11 +245,11 @@ public class Main extends JavaPlugin implements Listener {
 		 * value. Instead, we then set the value to the default value the server-owner
 		 * has set.
 		 */
-		if (!pvpDisabledPlayers.containsKey(playerHurtUUID)) 
+		if (!(pvpDisabledPlayers.containsKey(playerHurtUUID))) 
 		{
 			pvpDisabledPlayers.put(playerHurtUUID, DisabledByDefault);
 		} 
-		else if (!pvpDisabledPlayers.containsKey(playerHarmUUID)) 
+		else if (!(pvpDisabledPlayers.containsKey(playerHarmUUID))) 
 		{
 			pvpDisabledPlayers.put(playerHarmUUID, DisabledByDefault);
 		}
@@ -302,17 +299,19 @@ public class Main extends JavaPlugin implements Listener {
 		{
 			UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 			UUID playerCausingHarm = Bukkit.getPlayer(e.getDamager().getName()).getUniqueId();
-			
+			int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt),Bukkit.getPlayer(playerCausingHarm));
+
 			if (playerGettingHurt == playerCausingHarm) 
 			{
-				//Do nothing, don't even check if the player is attacking themselves.
-			}else {
-				int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt),Bukkit.getPlayer(playerCausingHarm));
+				//is AllowSelfHarming enabled
+				if (AllowSelfHarming == false)
+					if (pvpCheck == 1)
+						e.setCancelled(true);
+			}
+				else 
+			{
 				switch (pvpCheck) 
 				{
-				case 4:
-					e.setCancelled(false);
-					break;
 				case 1:
 					e.setCancelled(true);
 					break;
@@ -327,7 +326,8 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 
-		} else if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Arrow)) 
+		} 
+		else if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Arrow)) 
 		{
 
 			final Arrow arrow = (Arrow) e.getDamager();
@@ -336,27 +336,32 @@ public class Main extends JavaPlugin implements Listener {
 				Player playerCausingHarmp = (Player) arrow.getShooter();
 				UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 				Player playerGettingHurtp = (Player) e.getEntity();
+				int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt), playerCausingHarmp);
+
+				//is the player hurting themselves
 				if (playerCausingHarmp == playerGettingHurtp) 
 				{
-					//Do nothing, don't even check if the player is attacking themselves.
+					//is AllowSelfHarming enabled
+					if (AllowSelfHarming == false)
+						if (pvpCheck == 1)
+							e.setCancelled(true);
 				}
 				else 
 				{
-					int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt), playerCausingHarmp);
 					switch (pvpCheck) 
 					{
-					case 4:
-						e.setCancelled(false);
-						break;
 					case 1:
+						arrow.remove();
 						playerGettingHurtp.setFireTicks(0);
 						e.setCancelled(true);
 						break;
 					case 2:
+						arrow.remove();
 						playerGettingHurtp.setFireTicks(0);
 						e.setCancelled(true);
 						break;
 					case 3:
+						arrow.remove();
 						playerGettingHurtp.setFireTicks(0);
 						e.setCancelled(true);
 						break;
@@ -501,7 +506,15 @@ public class Main extends JavaPlugin implements Listener {
 					"&7[&3PvPToggle&7] &3&oSorry {PLAYERCAUSINGHARM}, you're currently attacking {PLAYERGETTINGHURT} whilst your PvP is disabled for yourself. Please use /PvPToggle to change this..",
 					"String");
 		}
+
 		OPUsingBypassedPvP = ConfigUtility.configReadString("DefaultMessages.OPUsingBypassedPvP");
+
+		if (!ConfigUtility.configContainsBoolean("AllowSelfHarming")) 
+		{
+			ConfigUtility.populateConfig("AllowSelfHarming", "false", "Boolean");
+		}
+		AllowSelfHarming = ConfigUtility.configReadBoolean("AllowSelfHarming");
+		
 
 		ConfigUtility.saveConfiguration();
 		/*
