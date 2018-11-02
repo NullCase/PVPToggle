@@ -13,12 +13,12 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="E:/Resources/1.12/worldedit-bukkit-6.1.7.3.jar"/>
 	<classpathentry kind="lib" path="E:/Resources/1.12/worldguard-6.2.1.jar"/>
-	<classpathentry kind="lib" path="E:/Spigot Builds/spigot-1.12.1-R0.1-SNAPSHOT-b1389.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/EHUtilities"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="E:/Spigot Builds/spigot-1.13.2-R0.1-SNAPSHOT-b1976.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

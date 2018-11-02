@@ -32,7 +32,8 @@ public class Main extends JavaPlugin implements Listener {
 	public Map<UUID, Boolean> adminLogging = new HashMap<UUID, Boolean>();
 	public Map<UUID, Boolean> playersInPvP = new HashMap<UUID, Boolean>();
 
-	public void onEnable() {
+	public void onEnable() 
+	{
 		pvpDisabledPlayers = new HashMap<UUID, Boolean>();
 		Bukkit.getLogger().info("----------- Attempting to enable PvPToggle -----------");
 		PluginDescriptionFile pdf = this.getDescription();
@@ -59,16 +60,21 @@ public class Main extends JavaPlugin implements Listener {
 	private String OPUsingBypassedPvP;
 	private boolean DisabledByDefault = false;
 
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("pvptoggle")) {
-			if (sender.hasPermission("pvptoggle.use")) {
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) 
+	{
+		if (cmd.getName().equalsIgnoreCase("pvptoggle")) 
+		{
+			if (sender.hasPermission("pvptoggle.use")) 
+			{
 				UUID playerUUID = Bukkit.getServer().getPlayer(sender.getName()).getUniqueId();
-				switch (args.length) {
+				switch (args.length) 
+				{
 				case 0:
 					sender.sendMessage(StringUtility.format("&7&m<----------->"));
 					sender.sendMessage(StringUtility.format("&b&lPvPToggle Usage"));
 					sender.sendMessage(StringUtility.format("&3&o'/PvPToggle <off/on>' &bto toggle PvP on or off."));
-					if (sender.hasPermission("pvptoggle.admin")) {
+					if (sender.hasPermission("pvptoggle.admin")) 
+					{
 						sender.sendMessage(StringUtility.format(
 								"&3&o'/PvPToggle <user> [off/on]'&b use just user to view current status for that user, or disable it by adding either off/on."));
 					}
@@ -76,56 +82,80 @@ public class Main extends JavaPlugin implements Listener {
 					break;
 
 				case 1:
-					if (args[0].equalsIgnoreCase("off") || (args[0].equalsIgnoreCase("disable"))) {
-						if (pvpDisabledPlayers.containsKey(playerUUID)) {
+					if (args[0].equalsIgnoreCase("off") || (args[0].equalsIgnoreCase("disable"))) 
+					{
+						if (pvpDisabledPlayers.containsKey(playerUUID)) 
+						{
 							pvpDisabledPlayers.put(playerUUID, true);
 						}
 						pvpDisabledPlayers.put(playerUUID, true);
 						sender.sendMessage(StringUtility.format("&7[&3PvPToggle&7]&3&o You have disabled PvP"));
-					} else if (args[0].equalsIgnoreCase("on") || (args[0].equalsIgnoreCase("enable"))){
-						if (pvpDisabledPlayers.containsKey(playerUUID)) {
+					} 
+					else if (args[0].equalsIgnoreCase("on") || (args[0].equalsIgnoreCase("enable")))
+					{
+					if (pvpDisabledPlayers.containsKey(playerUUID)) 
+						{
 							pvpDisabledPlayers.put(playerUUID, false);
 						}
 						pvpDisabledPlayers.put(playerUUID, false);
 						sender.sendMessage(StringUtility.format("&7[&3PvPToggle&7]&3&o You have enabled PvP"));
-					} else if (args[0].equalsIgnoreCase("reload")) {
-						if (sender.hasPermission("pvptoggle.admin")) {
+					}
+					else if (args[0].equalsIgnoreCase("reload")) 
+					{
+						if (sender.hasPermission("pvptoggle.admin")) 
+						{
 							try {
-								for (UUID i : pvpDisabledPlayers.keySet()) {
+								for (UUID i : pvpDisabledPlayers.keySet()) 
+								{
 									String y = pvpDisabledPlayers.get(i).booleanValue() + "";
 									ConfigUtility.populateConfig("Data." + i, y.toLowerCase(), "Boolean");
 								}
-								for (UUID a : adminLogging.keySet()) {
+								for (UUID a : adminLogging.keySet()) 
+								{
 									String y = adminLogging.get(a).booleanValue() + "";
 									ConfigUtility.populateConfig("Admins." + a, y.toLowerCase(), "Boolean");
 								}
 								ConfigUtility.saveConfiguration();
-							} catch (NullPointerException e) {
+							} 
+							catch (NullPointerException e) 
+							{
+									//Do nothing
 							}
 							ConfigUtility.loadYamls();
 							readFromConfig();
 							sender.sendMessage(StringUtility.format("&7[&3PvPToggle&7]&3&o Config Reloaded."));
 						}
-					} else {
+					} 
+					else 
+					{
 						sender.sendMessage(StringUtility.format(wrongUsage));
 					}
 					break;
 
 				case 2:
-					if (sender.hasPermission("pvptoggle.admin")) {
+					if (sender.hasPermission("pvptoggle.admin")) 
+					{
 						String player = args[0];
 						UUID puuid = null;
 						Boolean yn = false;
-						if (args[1].equalsIgnoreCase("on") || (args[1].equalsIgnoreCase("enable"))) {
+						if (args[1].equalsIgnoreCase("on") || (args[1].equalsIgnoreCase("enable"))) 
+						{
 							yn = true;
-						}else if (args[1].equalsIgnoreCase("off")||args[1].equalsIgnoreCase("disable")) {
+						}
+							else if (args[1].equalsIgnoreCase("off")||args[1].equalsIgnoreCase("disable")) 
+						{
 							
-						}else {
+						}
+						else 
+						{
 							break;
 						}
-						try {
+						try 
+						{
 							puuid = Bukkit.getServer().getPlayer(player).getUniqueId();
-						} catch (Exception e) {
+						} 
+							catch (Exception e) 
+						{
 							sender.sendMessage("Failed to get UUID for Player: " + player);
 							break;
 						}
@@ -133,29 +163,36 @@ public class Main extends JavaPlugin implements Listener {
 						pvpDisabledPlayers.put(puuid, yn);
 						String en = "";
 
-						if (yn == true) {
+						if (yn == true) 
+						{
 							en = "enabled";
-							if (pvpDisabledPlayers.containsKey(playerUUID)) {
+							if (pvpDisabledPlayers.containsKey(playerUUID)) 
+							{
 								pvpDisabledPlayers.put(playerUUID, false);
 							}
 							pvpDisabledPlayers.put(playerUUID, false);
 						}
-						if (yn == false) {
+						if (yn == false) 
+						{
 							en = "disabled";
-							if (pvpDisabledPlayers.containsKey(playerUUID)) {
+							if (pvpDisabledPlayers.containsKey(playerUUID)) 
+							{
 								pvpDisabledPlayers.put(playerUUID, true);
 							}
 							pvpDisabledPlayers.put(playerUUID, true);
 						}
 
-						if (p.isOnline()) {
+						if (p.isOnline()) 
+						{
 							p.sendMessage(StringUtility.format(
 									"&7[&3PvPToggle&7] &3" + sender.getName() + "&3 has "+ en + " your PvP."));
 						}
 						sender.sendMessage(StringUtility.format("&7[&3PvPToggle&7] &3You have successfully changed "
 								+ p.getName() + "'s&3 PvP Status to " + en + "."));
 
-					} else {
+					} 
+					else 
+					{
 						sender.sendMessage(StringUtility.format(noPermission));
 					}
 					break;
@@ -164,7 +201,9 @@ public class Main extends JavaPlugin implements Listener {
 					sender.sendMessage(StringUtility.format(wrongUsage));
 					break;
 				}
-			} else {
+			} 
+			else 
+			{
 				sender.sendMessage(StringUtility.format(noPermission));
 			}
 			return true;
@@ -172,12 +211,15 @@ public class Main extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	public void onDisable() {
-		for (UUID i : pvpDisabledPlayers.keySet()) {
+	public void onDisable() 
+	{
+		for (UUID i : pvpDisabledPlayers.keySet()) 
+		{
 			String y = pvpDisabledPlayers.get(i).booleanValue() + "";
 			ConfigUtility.populateConfig("Data." + i, y.toLowerCase(), "Boolean");
 		}
-		for (UUID a : adminLogging.keySet()) {
+		for (UUID a : adminLogging.keySet()) 
+		{
 			String y = adminLogging.get(a).booleanValue() + "";
 			ConfigUtility.populateConfig("Admins." + a, y.toLowerCase(), "Boolean");
 		}
@@ -196,7 +238,8 @@ public class Main extends JavaPlugin implements Listener {
 	 * 4 - Allowed 	-	The player causing harm is OP and can bypass.<br>
 	 * 0 - Allowed		- 	Allows the PvP to go on as normal.
 	 */
-	public int isPvPDisabledForPlayers(Player playerGettingHurt, Player playerCausingHarm) {
+	public int isPvPDisabledForPlayers(Player playerGettingHurt, Player playerCausingHarm) 
+	{
 		UUID playerHurtUUID = playerGettingHurt.getUniqueId();
 		UUID playerHarmUUID = playerCausingHarm.getUniqueId();
 		
@@ -205,13 +248,17 @@ public class Main extends JavaPlugin implements Listener {
 		 * value. Instead, we then set the value to the default value the server-owner
 		 * has set.
 		 */
-		if (!pvpDisabledPlayers.containsKey(playerHurtUUID)) {
+		if (!pvpDisabledPlayers.containsKey(playerHurtUUID)) 
+		{
 			pvpDisabledPlayers.put(playerHurtUUID, DisabledByDefault);
-		} else if (!pvpDisabledPlayers.containsKey(playerHarmUUID)) {
+		} 
+		else if (!pvpDisabledPlayers.containsKey(playerHarmUUID)) 
+		{
 			pvpDisabledPlayers.put(playerHarmUUID, DisabledByDefault);
 		}
 
-		else if (pvpDisabledPlayers.get(playerHurtUUID) && (playerCausingHarm.isOp()) && (OPsToBypass)) {
+		else if (pvpDisabledPlayers.get(playerHurtUUID) && (playerCausingHarm.isOp()) && (OPsToBypass)) 
+		{
 			playerCausingHarm.sendMessage(StringUtility.format(OPUsingBypassedPvP)
 					.replace("{PLAYERGETTINGHURT}", playerGettingHurt.getName())
 					.replace("{PLAYERCAUSINGHARM}", playerCausingHarm.getName()));
@@ -220,21 +267,24 @@ public class Main extends JavaPlugin implements Listener {
 			
 		}
 		
-		else if ((pvpDisabledPlayers.get(playerHurtUUID) == true) && (pvpDisabledPlayers.get(playerHarmUUID) == true)) {
+		else if ((pvpDisabledPlayers.get(playerHurtUUID) == true) && (pvpDisabledPlayers.get(playerHarmUUID) == true)) 
+		{
 			playerCausingHarm.sendMessage(StringUtility.format(bothDisabled)
 					.replace("{PLAYERGETTINGHURT}", playerGettingHurt.getName())
 					.replace("{PLAYERCAUSINGHARM}", playerCausingHarm.getName()));
 			return 1;
 		}
 
-		else if (pvpDisabledPlayers.get(playerHurtUUID)) {
+		else if (pvpDisabledPlayers.get(playerHurtUUID)) 
+		{
 			playerCausingHarm.sendMessage(StringUtility.format(playerGettingHurtDisabled)
 					.replace("{PLAYERGETTINGHURT}", playerGettingHurt.getName())
 					.replace("{PLAYERCAUSINGHARM}", playerCausingHarm.getName()));
 			return 2;
 		}
 
-		else if (pvpDisabledPlayers.get(playerHarmUUID)) {
+		else if (pvpDisabledPlayers.get(playerHarmUUID)) 
+		{
 			playerCausingHarm.sendMessage(StringUtility.format(playerCausingHarmDisabled)
 					.replace("{PLAYERGETTINGHURT}", playerGettingHurt.getName())
 					.replace("{PLAYERCAUSINGHARM}", playerCausingHarm.getName()));
@@ -246,16 +296,20 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onEntityDamagedEvent(EntityDamageByEntityEvent e) {
-		if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Player)) {
+	public void onEntityDamagedEvent(EntityDamageByEntityEvent e) 
+	{
+		if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Player))
+		{
 			UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 			UUID playerCausingHarm = Bukkit.getPlayer(e.getDamager().getName()).getUniqueId();
 			
-			if (playerGettingHurt == playerCausingHarm) {
+			if (playerGettingHurt == playerCausingHarm) 
+			{
 				//Do nothing, don't even check if the player is attacking themselves.
 			}else {
 				int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt),Bukkit.getPlayer(playerCausingHarm));
-				switch (pvpCheck) {
+				switch (pvpCheck) 
+				{
 				case 4:
 					e.setCancelled(false);
 					break;
@@ -273,18 +327,24 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 
-		} else if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Arrow)) {
+		} else if ((e.getEntity() instanceof Player) && (e.getDamager() instanceof Arrow)) 
+		{
 
 			final Arrow arrow = (Arrow) e.getDamager();
-			if (arrow.getShooter() instanceof Player) {
+			if (arrow.getShooter() instanceof Player) 
+			{
 				Player playerCausingHarmp = (Player) arrow.getShooter();
 				UUID playerGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 				Player playerGettingHurtp = (Player) e.getEntity();
-				if (playerCausingHarmp == playerGettingHurtp) {
+				if (playerCausingHarmp == playerGettingHurtp) 
+				{
 					//Do nothing, don't even check if the player is attacking themselves.
-				}else {
+				}
+				else 
+				{
 					int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(playerGettingHurt), playerCausingHarmp);
-					switch (pvpCheck) {
+					switch (pvpCheck) 
+					{
 					case 4:
 						e.setCancelled(false);
 						break;
@@ -310,18 +370,26 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerFishEvent(PlayerFishEvent e) {
+	public void onPlayerFishEvent(PlayerFishEvent e) 
+	{
 		Player playerFishing = e.getPlayer();
 		Entity caught = e.getCaught();
-		if (caught == null) {
+		if (caught == null) 
+		{
 			// Do nothing lol.
-		} else if (caught instanceof Player) {
+		} 
+		else if (caught instanceof Player)
+		{
 			Player playerCaught = (Player) caught;
-			if (playerCaught == playerFishing) {
+			if (playerCaught == playerFishing)
+			{
 				//Do nothing, again.
-			}else {
+			} 
+			else 
+			{
 				int pvpCheck = isPvPDisabledForPlayers(playerCaught, playerFishing);
-				switch (pvpCheck) {
+				switch (pvpCheck) 
+				{
 				case 4:
 					e.setCancelled(false);
 					break;
@@ -346,10 +414,13 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onJoin(PlayerJoinEvent e) {
+	public void onJoin(PlayerJoinEvent e) 
+	{
 		Player p = e.getPlayer();
-		if (!pvpDisabledPlayers.containsKey(p.getUniqueId())) {
-			if (ConfigUtility.configContainsBoolean("Data." + p.getUniqueId())) {
+		if (!pvpDisabledPlayers.containsKey(p.getUniqueId())) 
+		{
+			if (ConfigUtility.configContainsBoolean("Data." + p.getUniqueId())) 
+			{
 				boolean b = ConfigUtility.configReadBoolean("Data." + p.getUniqueId());
 				pvpDisabledPlayers.put(p.getUniqueId(), b);
 			} else {
@@ -358,63 +429,74 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
-	public void onLeave(PlayerQuitEvent e) {
+	public void onLeave(PlayerQuitEvent e) 
+	{
 		Player p = e.getPlayer();
 
-		if (playersInPvP.get(p.getUniqueId())) {
+		if (playersInPvP.get(p.getUniqueId())) 
+		{
 			p.setHealth(0);
 			Bukkit.broadcastMessage(p.getName() + " logged out whilst in PvP.");
 		}
 
 	}
 
-	public void readFromConfig() {
+	public void readFromConfig()
+	{
 		/*
 		 * Write defaults to configuration file.
 		 */
-		if (!ConfigUtility.configContainsBoolean("DefaultMessages.NoPermission")) {
+		if (!ConfigUtility.configContainsBoolean("DefaultMessages.NoPermission")) 
+		{
 			ConfigUtility.populateConfig("DefaultMessages.NoPermission",
 					"&7[&3PvPToggle&7] &3&oYou do not have the required permissions to perform this command.",
 					"String");
 		}
 		noPermission = ConfigUtility.configReadString("DefaultMessages.NoPermission");
 
-		if (!ConfigUtility.configContainsBoolean("DefaultMessages.WrongUsage")) {
+		if (!ConfigUtility.configContainsBoolean("DefaultMessages.WrongUsage"))
+		{
 			ConfigUtility.populateConfig("DefaultMessages.WrongUsage",
 					"&7[&3PvPToggle&7] &3&oIncorrect usage, use '/pvptoggle' for help.", "String");
 		}
 		wrongUsage = ConfigUtility.configReadString("DefaultMessages.WrongUsage");
 
-		if (!ConfigUtility.configContainsBoolean("DisabledByDefault")) {
+		if (!ConfigUtility.configContainsBoolean("DisabledByDefault")) 
+		{
 			ConfigUtility.populateConfig("DisabledByDefault", "true", "Boolean");
 		}
 		DisabledByDefault = ConfigUtility.configReadBoolean("DisabledByDefault");
 
-		if (!ConfigUtility.configContainsBoolean("OPsToBypass")) {
+		if (!ConfigUtility.configContainsBoolean("OPsToBypass")) 
+		{
 			ConfigUtility.populateConfig("OPsToBypass", "false", "Boolean");
 		}
 		OPsToBypass = ConfigUtility.configReadBoolean("OPsToBypass");
 
-		if (!ConfigUtility.configContainsBoolean("DefaultMessages.BothPlayersPvPDisabled")) {
+		if (!ConfigUtility.configContainsBoolean("DefaultMessages.BothPlayersPvPDisabled")) 
+		{
 			ConfigUtility.populateConfig("DefaultMessages.BothPlayersPvPDisabled",
 					"&7[&3PvPToggle&7] &3&oBoth you ({PLAYERCAUSINGHARM}) and {PLAYERGETTINGHURT} have PvP Disabled.",
 					"String");
 		}
 		bothDisabled = ConfigUtility.configReadString("DefaultMessages.BothPlayersPvPDisabled");
 
-		if (!ConfigUtility.configContainsBoolean("DefaultMessages.PlayerGettingHurtPvPDisabled")) {
+		if (!ConfigUtility.configContainsBoolean("DefaultMessages.PlayerGettingHurtPvPDisabled")) 
+		{
 			ConfigUtility.populateConfig("DefaultMessages.PlayerGettingHurtPvPDisabled",
 					"&7[&3PvPToggle&7] &3&o{PLAYERGETTINGHURT} has PvP Disabled.", "String");
 		}
 		playerGettingHurtDisabled = ConfigUtility.configReadString("DefaultMessages.PlayerGettingHurtPvPDisabled");
 
-		if (!ConfigUtility.configContainsBoolean("DefaultMessages.PlayerCausingHarmPvPDisabled")) {
+		if (!ConfigUtility.configContainsBoolean("DefaultMessages.PlayerCausingHarmPvPDisabled")) 
+		{
 			ConfigUtility.populateConfig("DefaultMessages.PlayerCausingHarmPvPDisabled",
 					"&7[&3PvPToggle&7] &3&oYour PvP is disabled. Change this by using /PvPToggle.", "String");
 		}
 		playerCausingHarmDisabled = ConfigUtility.configReadString("DefaultMessages.PlayerCausingHarmPvPDisabled");
 
-		if (!ConfigUtility.configContainsBoolean("DefaultMessages.OPUsingBypassedPvP")) {
+		if (!ConfigUtility.configContainsBoolean("DefaultMessages.OPUsingBypassedPvP"))
+		{
 			ConfigUtility.populateConfig("DefaultMessages.OPUsingBypassedPvP",
 					"&7[&3PvPToggle&7] &3&oSorry {PLAYERCAUSINGHARM}, you're currently attacking {PLAYERGETTINGHURT} whilst your PvP is disabled for yourself. Please use /PvPToggle to change this..",
 					"String");
@@ -427,58 +509,75 @@ public class Main extends JavaPlugin implements Listener {
 		 * <false/true>
 		 */
 		try {
-			for (String i : getConfig().getConfigurationSection("Data").getKeys(false)) {
+			for (String i : getConfig().getConfigurationSection("Data").getKeys(false)) 
+			{
 				try {
 					boolean y = ConfigUtility.configReadBoolean("Data." + i);
 					pvpDisabledPlayers.put(UUID.fromString(i), y);
-				} catch (NullPointerException e) {
+				} 
+				catch (NullPointerException e) 
+				{
 					pvpDisabledPlayers.put(UUID.fromString(i), false);
 				}
 			}
-		} catch (NullPointerException e) {
+		} catch (NullPointerException e) 
+		{
 		}
 		/*
 		 * We check the admins settings. Admins.PlayerUUID.LoggingEnabled <true/false>
 		 */
 		try {
-			for (String logging : getConfig().getConfigurationSection("Admins").getKeys(false)) {
+			for (String logging : getConfig().getConfigurationSection("Admins").getKeys(false)) 
+			{
 				try {
 					boolean y = ConfigUtility.configReadBoolean("Admins." + logging + ".LoggingEnabled");
 					adminLogging.put(UUID.fromString(logging), y);
-				} catch (NullPointerException e) {
+				} 
+				catch (NullPointerException e) 
+				{
 					adminLogging.put(UUID.fromString(logging), false);
 				}
 			}
-		} catch (NullPointerException e) {
+		} 
+		catch (NullPointerException e) 
+		{
 		}
 	}
 
-	public void addPlayerToPvPTimer(UUID playerToAdd) {
+	public void addPlayerToPvPTimer(UUID playerToAdd) 
+	{
 		playersInPvP.put(playerToAdd, true);
-		new BukkitRunnable() {
+		new BukkitRunnable() 
+		{
 			@Override
-			public void run() {
+			public void run() 
+			{
 				removePlayersFromPvPTimer(playerToAdd);
 			}
 		}.runTaskLater(this, 100);
 	}
 
-	public void addPlayerToPvPTimer(UUID playerToAdd, UUID playerToAlsoAdd) {
+	public void addPlayerToPvPTimer(UUID playerToAdd, UUID playerToAlsoAdd) 
+	{
 		playersInPvP.put(playerToAdd, true);
 		playersInPvP.put(playerToAlsoAdd, true);
-		new BukkitRunnable() {
+		new BukkitRunnable() 
+		{
 			@Override
-			public void run() {
+			public void run() 
+			{
 				removePlayersFromPvPTimer(playerToAdd, playerToAlsoAdd);
 			}
 		}.runTaskLater(this, 100);
 	}
 
-	public void removePlayersFromPvPTimer(UUID playerToRemove) {
+	public void removePlayersFromPvPTimer(UUID playerToRemove) 
+	{
 		playersInPvP.remove(playerToRemove);
 	}
 
-	public void removePlayersFromPvPTimer(UUID playerToRemove, UUID playerToAlsoRemove) {
+	public void removePlayersFromPvPTimer(UUID playerToRemove, UUID playerToAlsoRemove) 
+	{
 		playersInPvP.remove(playerToRemove);
 		playersInPvP.remove(playerToAlsoRemove);
 	}
@@ -486,7 +585,8 @@ public class Main extends JavaPlugin implements Listener {
 	/*
 	 * TO DO
 	 */
-	public void listPlayersInPvPTimer(CommandSender s) {
+	public void listPlayersInPvPTimer(CommandSender s)
+	{
 	}
 
 }
