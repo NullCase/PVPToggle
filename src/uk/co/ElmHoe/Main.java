@@ -26,7 +26,6 @@ public class Main extends JavaPlugin implements Listener {
 	private static String localVersion;
 
 	public Map<UUID, Boolean> pvpDisabledPlayers;
-	public Map<UUID, Boolean> adminLogging = new HashMap<UUID, Boolean>();
 	public Map<UUID, Boolean> playersInPvP = new HashMap<UUID, Boolean>();
 
 	public void onEnable() 
@@ -40,7 +39,7 @@ public class Main extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, this);
 
 		readFromConfig();
-		Bukkit.getLogger().info("----------- Enabled PvPToggle V" + localVersion + " -----------");
+		Bukkit.getLogger().info("----------- Enabled PvPToggle v" + localVersion + " -----------");
 
 	}
 	private Boolean OPsToBypass;
@@ -93,11 +92,6 @@ public class Main extends JavaPlugin implements Listener {
 								{
 									String y = pvpDisabledPlayers.get(i).booleanValue() + "";
 									ConfigUtility.populateConfig("Data." + i, y.toLowerCase(), "Boolean");
-								}
-								for (UUID a : adminLogging.keySet()) 
-								{
-									String y = adminLogging.get(a).booleanValue() + "";
-									ConfigUtility.populateConfig("Admins." + a, y.toLowerCase(), "Boolean");
 								}
 								ConfigUtility.saveConfiguration();
 							} 
@@ -178,11 +172,6 @@ public class Main extends JavaPlugin implements Listener {
 		{
 			String y = pvpDisabledPlayers.get(i).booleanValue() + "";
 			ConfigUtility.populateConfig("Data." + i, y.toLowerCase(), "Boolean");
-		}
-		for (UUID a : adminLogging.keySet()) 
-		{
-			String y = adminLogging.get(a).booleanValue() + "";
-			ConfigUtility.populateConfig("Admins." + a, y.toLowerCase(), "Boolean");
 		}
 		ConfigUtility.saveConfiguration();
 	}
@@ -276,25 +265,21 @@ public class Main extends JavaPlugin implements Listener {
 				final Arrow arrow = (Arrow) e.getDamager();
 				if (arrow.getShooter() instanceof Player) 
 				{
-					Player playerCausingHarmp = (Player) arrow.getShooter();
-					Player playerGettingHurtp = (Player) e.getEntity();
-					int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(userGettingHurt), playerCausingHarmp);
+					Player playerCausingHarm = (Player) arrow.getShooter();
+					Player playerGettingHurt = (Player) e.getEntity();
+					int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(userGettingHurt), playerCausingHarm);
 
-					if (playerCausingHarmp == playerGettingHurtp)
-					{
+					if (playerCausingHarm == playerGettingHurt)
 						if (AllowSelfHarming == false)
 							if (pvpCheck == 1)
 								e.setCancelled(true);
-					}
 					else
-					{
 						if (pvpCheck == 1 || pvpCheck == 2 || pvpCheck == 3)
 						{
 							arrow.remove();
-							playerGettingHurtp.setFireTicks(0);
+							playerGettingHurt.setFireTicks(0);
 							e.setCancelled(true);
 						}
-					}
 				}
 
 			}
@@ -331,8 +316,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onJoin(PlayerJoinEvent e) 
 	{
 		Player p = e.getPlayer();
-		if (!pvpDisabledPlayers.containsKey(p.getUniqueId())) 
-		{
+		if (!pvpDisabledPlayers.containsKey(p.getUniqueId()))
 			if (ConfigUtility.configContainsBoolean("Data." + p.getUniqueId())) 
 			{
 				boolean b = ConfigUtility.configReadBoolean("Data." + p.getUniqueId());
@@ -340,7 +324,6 @@ public class Main extends JavaPlugin implements Listener {
 			} else {
 				pvpDisabledPlayers.put(p.getUniqueId(), DisabledByDefault);
 			}
-		}
 	}
 
 	public void readFromConfig()
@@ -388,6 +371,7 @@ public class Main extends JavaPlugin implements Listener {
 		OPUsingBypassedPvP = ConfigUtility.configReadString("DefaultMessages.OPUsingBypassedPvP");
 		AllowSelfHarming = ConfigUtility.configReadBoolean("Settings.AllowSelfHarming");
 
+		
 		ConfigUtility.saveConfiguration();
 		/*
 		 * We check the settings currently saved by players. Data.PlayerUUID
@@ -407,27 +391,6 @@ public class Main extends JavaPlugin implements Listener {
 			}
 		} 
 		catch (NullPointerException e)
-		{
-			
-		}
-		
-		/*
-		 * We check the admins settings. Admins.PlayerUUID.LoggingEnabled <true/false>
-		 */
-		try {
-			for (String logging : getConfig().getConfigurationSection("Admins").getKeys(false)) 
-			{
-				try {
-					boolean y = ConfigUtility.configReadBoolean("Admins." + logging + ".LoggingEnabled");
-					adminLogging.put(UUID.fromString(logging), y);
-				} 
-				catch (NullPointerException e) 
-				{
-					adminLogging.put(UUID.fromString(logging), false);
-				}
-			}
-		} 
-		catch (NullPointerException e) 
 		{
 			
 		}
