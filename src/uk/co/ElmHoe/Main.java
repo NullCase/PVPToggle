@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -115,10 +116,16 @@ public class Main extends JavaPlugin implements Listener {
 					{
 						String player = args[0];
 						UUID puuid = null;
-						Boolean yn = false;
+						Boolean pvpDisabled = false;
+						
 						if (args[1].equalsIgnoreCase("on") || (args[1].equalsIgnoreCase("enable"))) 
-							yn = true;
-						try 
+							pvpDisabled = false;
+						else if (args[1].equalsIgnoreCase("off") || (args[1].equalsIgnoreCase("disable"))) 
+							pvpDisabled = true;
+						else
+							return false;
+						
+						try
 						{
 							puuid = Bukkit.getServer().getPlayer(player).getUniqueId();
 						} 
@@ -126,27 +133,16 @@ public class Main extends JavaPlugin implements Listener {
 						{
 							sender.sendMessage("Failed to get UUID for Player: " + player);
 						}
+						
 						Player p = Bukkit.getPlayer(puuid);
-						pvpDisabledPlayers.put(puuid, yn);
-						String en = "";
-
-						if (yn) 
-						{
-							en = "enabled";
-							pvpDisabledPlayers.put(playerUUID, false);
-						}
-						else
-						{
-							en = "disabled";
-							pvpDisabledPlayers.put(playerUUID, true);
-						}
+						pvpDisabledPlayers.put(puuid, pvpDisabled);
 
 						if (p.isOnline()) 
 						{
-							p.sendMessage(StringUtility.format("&7[&3PvPToggle&7] &3" + sender.getName() + "&3 has "+ en + " your PvP."));
+							p.sendMessage(StringUtility.format("&7[&3PvPToggle&7] &3" + sender.getName() + "&3 has "+ (pvpDisabled ? "disabled" : "enabled") + " your PvP."));
 						}
 						sender.sendMessage(StringUtility.format("&7[&3PvPToggle&7] &3You have successfully changed "
-								+ p.getName() + "'s&3 PvP Status to " + en + "."));
+								+ p.getName() + "'s&3 PvP Status to " + (pvpDisabled ? "disabled" : "enabled") + "."));
 
 					} 
 					else 
@@ -198,29 +194,26 @@ public class Main extends JavaPlugin implements Listener {
 		 * value. Instead, we then set the value to the default value the server-owner
 		 * has set.
 		 */
-		if (!(pvpDisabledPlayers.containsKey(userHurtUUID)))
+		if (!pvpDisabledPlayers.containsKey(userHurtUUID))
 			pvpDisabledPlayers.put(userHurtUUID, DisabledByDefault);
 
-		else if (!(pvpDisabledPlayers.containsKey(userHarmingUUID)))
+		if (!pvpDisabledPlayers.containsKey(userHarmingUUID))
 			pvpDisabledPlayers.put(userHarmingUUID, DisabledByDefault);
 
-		else if (pvpDisabledPlayers.get(userHurtUUID) && (userCausingHarm.isOp()) && (OPsToBypass)) 
+		if (pvpDisabledPlayers.get(userHurtUUID) && userCausingHarm.isOp() && OPsToBypass)
 		{
 			userCausingHarm.sendMessage(StringUtility.format(OPUsingBypassedPvP)
 					.replace("{userGettingHurt}", userGettingHurt.getName())
 					.replace("{userCausingHarm}", userCausingHarm.getName()));
 			return 4;
-			
 		}
-		
-		else if ((pvpDisabledPlayers.get(userHurtUUID) == true) && (pvpDisabledPlayers.get(userHarmingUUID) == true)) 
+		else if (pvpDisabledPlayers.get(userHurtUUID) && pvpDisabledPlayers.get(userHarmingUUID))
 		{
 			userCausingHarm.sendMessage(StringUtility.format(bothDisabled)
 					.replace("{userGettingHurt}", userGettingHurt.getName())
 					.replace("{userCausingHarm}", userCausingHarm.getName()));
 			return 1;
 		}
-
 		else if (pvpDisabledPlayers.get(userHurtUUID)) 
 		{
 			userCausingHarm.sendMessage(StringUtility.format(playerGettingHurtDisabled)
@@ -244,7 +237,6 @@ public class Main extends JavaPlugin implements Listener {
 	{
 		if ((e.getEntity() instanceof Player) && ((e.getDamager() instanceof Player) || (e.getDamager() instanceof Arrow)))
 		{
-			
 			UUID userGettingHurt = Bukkit.getPlayer(e.getEntity().getName()).getUniqueId();
 
 			if (e.getDamager() instanceof Player)
@@ -253,12 +245,18 @@ public class Main extends JavaPlugin implements Listener {
 				int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(userGettingHurt),Bukkit.getPlayer(userCausingHarm));
 
 				if (userGettingHurt == userCausingHarm) 
-					if (AllowSelfHarming == false)
+				{
+					if (!AllowSelfHarming)
+					{
 						if (pvpCheck == 1)
 							e.setCancelled(true);
-				else 
+					}
+				}
+				else
+				{
 					if (pvpCheck == 1 || pvpCheck == 2 || pvpCheck == 3)
 						e.setCancelled(true);
+				}
 			}
 			if (e.getDamager() instanceof Arrow)
 			{
@@ -270,16 +268,23 @@ public class Main extends JavaPlugin implements Listener {
 					int pvpCheck = isPvPDisabledForPlayers(Bukkit.getPlayer(userGettingHurt), playerCausingHarm);
 
 					if (playerCausingHarm == playerGettingHurt)
+					{
 						if (AllowSelfHarming == false)
+						{
 							if (pvpCheck == 1)
 								e.setCancelled(true);
+						}
+					}
 					else
+					{
 						if (pvpCheck == 1 || pvpCheck == 2 || pvpCheck == 3)
 						{
-							arrow.remove();
+							if (arrow.getType() != EntityType.TRIDENT)
+								arrow.remove();
 							playerGettingHurt.setFireTicks(0);
 							e.setCancelled(true);
 						}
+					}
 				}
 
 			}
@@ -317,6 +322,7 @@ public class Main extends JavaPlugin implements Listener {
 	{
 		Player p = e.getPlayer();
 		if (!pvpDisabledPlayers.containsKey(p.getUniqueId()))
+		{
 			if (ConfigUtility.configContainsBoolean("Data." + p.getUniqueId())) 
 			{
 				boolean b = ConfigUtility.configReadBoolean("Data." + p.getUniqueId());
@@ -324,6 +330,7 @@ public class Main extends JavaPlugin implements Listener {
 			} else {
 				pvpDisabledPlayers.put(p.getUniqueId(), DisabledByDefault);
 			}
+		}
 	}
 
 	public void readFromConfig()

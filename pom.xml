@@ -3,6 +3,26 @@
   <groupId>PVPToggle</groupId>
   <artifactId>PVPToggle</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <repositories>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>
+  <dependencies>
+    <!--Spigot API-->
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.13.2-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+  		<groupId>EHUtilities</groupId>
+  		<artifactId>EHUtilities</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -16,11 +36,4 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-  	<dependency>
-  		<groupId>EHUtilities</groupId>
-  		<artifactId>EHUtilities</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
 </project>
