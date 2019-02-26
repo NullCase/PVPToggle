@@ -1,6 +1,6 @@
 name: PVPToggle
 main: uk.co.ElmHoe.Main
-version: 0.1
+version: 1.0
 author: ElmHoe
 load: POSTWORLD
 commands:
